@@ -1,10 +1,14 @@
 package me.kevinmandeville;
 
+import java.util.logging.Logger;
+
 /**
  * @author kmandeville
  */
 
 public class Main {
+
+    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
         String[] lines = DAY_1_INPUT.split("\n");
@@ -17,14 +21,18 @@ public class Main {
             int fullNumber = tensDigit + onesDigit;
             total += fullNumber;
         }
-        System.out.println("Total= " + total);
+        LOGGER.info("Total= " + total);
     }
 
     private static int findFirstDigit(String line) {
         int firstDigit = 0;
         for (int i = 0; i < line.length(); i++) {
+            int valueOfFirstWord = ifStartOfWordReturnValue(i, line);
             if (Character.isDigit(line.charAt(i))) {
                 firstDigit = Character.getNumericValue(line.charAt(i));
+                break;
+            } else if (valueOfFirstWord > -1) {
+                firstDigit = valueOfFirstWord;
                 break;
             }
         }
@@ -34,15 +42,33 @@ public class Main {
     private static int findLastDigit(String line) {
         int lastDigit = 0;
         for (int i = line.length() - 1; i >= 0; i--) {
+            int valueOfFirstWord = ifStartOfWordReturnValue(i, line);
             if (Character.isDigit(line.charAt(i))) {
                 lastDigit = Character.getNumericValue(line.charAt(i));
+                break;
+            } else if (valueOfFirstWord > -1) {
+                lastDigit = valueOfFirstWord;
                 break;
             }
         }
         return lastDigit;
     }
 
-    public static final String DAY_1_INPUT = """
+    private static int ifStartOfWordReturnValue(int pos, String line) {
+        // loop through the WORDS array and see if any of them exist starting at the pos value.
+        for (int i = 0; i <= 9; i++) {
+            if (line.indexOf(WORD_NUMBERS[i], pos) == pos) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static final String[] WORD_NUMBERS = new String[]{"zero", "one", "two", "three", "four", "five", "six",
+        "seven", "eight", "nine"};
+
+    private static final String DAY_1_INPUT = """
         46threevqs8114
         threetwoonez1gtrd
         6ffxbtff
