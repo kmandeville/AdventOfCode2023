@@ -2,7 +2,6 @@ package me.kevinmandeville.day1;
 
 import java.util.logging.Logger;
 import me.kevinmandeville.Day;
-import me.kevinmandeville.Main;
 
 /**
  * @author kmandeville
@@ -10,7 +9,7 @@ import me.kevinmandeville.Main;
  */
 public class Day1 implements Day {
 
-    private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(Day1.class.getName());
 
     public void execute() {
         String[] lines = DAY_1_INPUT.split("\n");
