@@ -15,52 +15,44 @@ import me.kevinmandeville.Day;
 public class Day2 implements Day {
 
     private static final Logger LOGGER = Logger.getLogger(Day2.class.getName());
-    // only 12 red cubes, 13 green cubes, and 14 blue cubess
-    private Map<String, Integer> maxValues = Map.ofEntries(
-        Map.entry("red", 12),
-        Map.entry("green", 13),
-        Map.entry("blue", 14)
-    );
+
 
     @Override
     public void execute() {
-        int totalOfGameNumbers = 0;
+        int totalOfPowers = 0;
 
         String[] lines = INPUT.split("\n");
 
         for (String line : lines) {
             //LOGGER.log(Level.WARNING, line);
-            int gameNumber = parseGameNumber(line);
+            //int gameNumber = parseGameNumber(line);
 
             String gameInfo = line.split(":")[1];
 
-            boolean isOver = false;
+            Map<String, Integer> maxOfEachColor = new HashMap<>();
             String[] grabs = gameInfo.split(";");
             for (String grab : grabs) {
                 LOGGER.log(Level.INFO, grab);
-                Map<String, Integer> instanceColorCounts = parseColorCounts(grab);
-                if (isOver(instanceColorCounts)) {
-                    isOver = true;
-                }
+
+                parseColorCounts(grab, maxOfEachColor);
             }
-            if (!isOver) {
-                totalOfGameNumbers += gameNumber;
-            }
+            totalOfPowers += computePower(maxOfEachColor);
         }
 
-        LOGGER.log(Level.INFO, "Total of game numbers: " + totalOfGameNumbers);
+        LOGGER.log(Level.INFO, "Total of game numbers: " + totalOfPowers);
     }
 
-    private boolean isOver(Map<String, Integer> instanceColorCounts) {
-        for (String s : instanceColorCounts.keySet()) {
-            if (instanceColorCounts.get(s) > maxValues.get(s)) {
-                return true;
-            }
+    private int computePower(Map<String, Integer> maxOfEachColor) {
+        int power = 1;
+
+        for (String s : maxOfEachColor.keySet()) {
+            power *= maxOfEachColor.get(s);
         }
-        return false;
+
+        return power;
     }
 
-    private Map<String, Integer> parseColorCounts(String instance) {
+    private void parseColorCounts(String instance, Map<String, Integer> maxOfEachColor) {
         Pattern pattern = Pattern.compile("(\\d+)\\s+(\\w+)");
         Matcher matcher = pattern.matcher(instance);
 
@@ -69,9 +61,10 @@ public class Day2 implements Day {
             String count = matcher.group(1);
             String color = matcher.group(2);
             result.put(color, Integer.parseInt(count));
-        }
 
-        return result;
+            maxOfEachColor.putIfAbsent(color, Integer.parseInt(count));
+            maxOfEachColor.computeIfPresent(color, (key, value) -> Math.max(value, Integer.parseInt(count)));
+        }
     }
 
     private int parseGameNumber(String line) {
